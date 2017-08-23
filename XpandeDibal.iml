@@ -7,5 +7,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="XpandeCustomization" exported="" />
+    <orderEntry type="module" module-name="adempiere" exported="" />
+    <orderEntry type="module" module-name="XpandeCore" exported="" />
+    <orderEntry type="module" module-name="XpandeRetail" exported="" />
   </component>
 </module>
