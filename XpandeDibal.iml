@@ -15,5 +15,6 @@
     <orderEntry type="module" module-name="XpandeRetail" exported="" />
     <orderEntry type="module" module-name="XpandeSisteco" exported="" />
     <orderEntry type="module" module-name="XpandeScanntech" exported="" />
+    <orderEntry type="module" module-name="XpandeBCU" exported="" />
   </component>
 </module>
