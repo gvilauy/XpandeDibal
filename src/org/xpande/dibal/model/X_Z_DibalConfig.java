@@ -30,7 +30,7 @@ public class X_Z_DibalConfig extends PO implements I_Z_DibalConfig, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20170822L;
+	private static final long serialVersionUID = 20171227L;
 
     /** Standard Constructor */
     public X_Z_DibalConfig (Properties ctx, int Z_DibalConfig_ID, String trxName)
@@ -87,6 +87,23 @@ public class X_Z_DibalConfig extends PO implements I_Z_DibalConfig, I_Persistent
 	public String getArchivoBatch () 
 	{
 		return (String)get_Value(COLUMNNAME_ArchivoBatch);
+	}
+
+	/** Set RutaInterfaceOut.
+		@param RutaInterfaceOut 
+		Ruta donde se crean los archivos de interface de salida para Sisteco
+	  */
+	public void setRutaInterfaceOut (String RutaInterfaceOut)
+	{
+		set_Value (COLUMNNAME_RutaInterfaceOut, RutaInterfaceOut);
+	}
+
+	/** Get RutaInterfaceOut.
+		@return Ruta donde se crean los archivos de interface de salida para Sisteco
+	  */
+	public String getRutaInterfaceOut () 
+	{
+		return (String)get_Value(COLUMNNAME_RutaInterfaceOut);
 	}
 
 	/** Set RutaInterfaceOutHist.

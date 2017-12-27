@@ -105,6 +105,19 @@ public interface I_Z_DibalConfig
 	  */
 	public boolean isActive();
 
+    /** Column name RutaInterfaceOut */
+    public static final String COLUMNNAME_RutaInterfaceOut = "RutaInterfaceOut";
+
+	/** Set RutaInterfaceOut.
+	  * Ruta donde se crean los archivos de interface de salida para Sisteco
+	  */
+	public void setRutaInterfaceOut(String RutaInterfaceOut);
+
+	/** Get RutaInterfaceOut.
+	  * Ruta donde se crean los archivos de interface de salida para Sisteco
+	  */
+	public String getRutaInterfaceOut();
+
     /** Column name RutaInterfaceOutHist */
     public static final String COLUMNNAME_RutaInterfaceOutHist = "RutaInterfaceOutHist";
 

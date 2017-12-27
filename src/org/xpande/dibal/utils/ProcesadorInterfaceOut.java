@@ -3,6 +3,7 @@ package org.xpande.dibal.utils;
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.I_M_Product;
 import org.compiere.model.Query;
+import org.xpande.core.utils.FileUtils;
 import org.xpande.dibal.model.*;
 
 import java.io.BufferedWriter;
@@ -29,6 +30,8 @@ public class ProcesadorInterfaceOut {
     private File fileBatch = null;
 
     private String fechaHoy = null;
+
+    private int contadorLinBatch = 0;
 
     /***
      * Constructor
@@ -67,7 +70,16 @@ public class ProcesadorInterfaceOut {
             message = this.executeInterfaceOutProducts(adOrgID);
             if (message != null) return message;
 
-            // Copiar archivos creados en path destino de Sisteco
+            // Copiar archivos creados en path destino de dibal
+            String pathArchivosDestino = this.dibalConfig.getRutaInterfaceOut() + File.separator;
+
+            // Si tengo lineas en archivos batch
+            if (this.contadorLinBatch > 0){
+                // Copio archivo batch a path destino
+                File fileBatchDest = new File( pathArchivosDestino + this.dibalConfig.getArchivoBatch());
+                FileUtils.copyFile(this.fileBatch, fileBatchDest);
+            }
+
 
         }
         catch (Exception e){
@@ -108,6 +120,7 @@ public class ProcesadorInterfaceOut {
                     bufferedWriterBatch.append(lineaArchivo);
                     bufferedWriterBatch.newLine();
 
+                    this.contadorLinBatch++;
                 }
 
                 if (lineasArchivo.size() > 0){
