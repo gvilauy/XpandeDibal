@@ -9,6 +9,7 @@ import org.xpande.dibal.model.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Properties;
@@ -131,10 +132,24 @@ public class ProcesadorInterfaceOut {
                 }
             }
 
+            if (bufferedWriterBatch != null){
+                bufferedWriterBatch.close();
+            }
+
         }
         catch (Exception e){
             throw new AdempiereException(e);
         }
+        finally {
+            if (bufferedWriterBatch != null){
+                try {
+                    bufferedWriterBatch.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
 
         return message;
     }
