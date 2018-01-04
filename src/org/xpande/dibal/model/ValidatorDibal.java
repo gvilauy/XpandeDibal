@@ -156,7 +156,7 @@ public class ValidatorDibal implements ModelValidator {
             MProduct product = (MProduct)model.getM_Product();
 
             // Si el producto no se vende o no esta activo, o no es de balanza, no hago nada
-            if ((!product.isSold()) || (!product.isActive()) || (!model.get_ValueAsBoolean("EsProductoBalanza"))){
+            if ((!product.isSold()) || (!product.isActive()) || (!product.get_ValueAsBoolean("EsProductoBalanza"))){
                 return mensaje;
             }
 
