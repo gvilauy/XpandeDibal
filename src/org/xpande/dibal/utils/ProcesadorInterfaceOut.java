@@ -177,7 +177,7 @@ public class ProcesadorInterfaceOut {
     private void createFiles() {
         try{
 
-            String[] hora = (new Timestamp(System.currentTimeMillis()).toString().split(dibalConfig.getSeparadorArchivoOut()));
+            String[] hora = (new Timestamp(System.currentTimeMillis()).toString().split(":"));
             String fecha =hora[0].replace("-", "").replace(" ", "_") + hora[1];
 
             this.fechaHoy = fecha;
