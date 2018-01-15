@@ -199,6 +199,8 @@ public class MZDibalInterfaceOut extends X_Z_DibalInterfaceOut {
 
             BigDecimal priceSO = productPrice.getPriceList();
 
+            priceSO = priceSO.setScale(priceList.getPricePrecision(), RoundingMode.HALF_UP);
+
             precioVenta = priceSO.toString();
             precioVenta = precioVenta.replace(".", "");
             precioVenta = String.format(formatoPrecio, Integer.parseInt(precioVenta));

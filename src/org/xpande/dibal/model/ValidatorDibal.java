@@ -92,7 +92,8 @@ public class ValidatorDibal implements ModelValidator {
 
                 // Pregunto por los campos cuyo cambio requiere informar a Balanza
                 if ((model.is_ValueChanged("C_UOM_ID"))
-                        || (model.is_ValueChanged("Description")) || (model.is_ValueChanged("EsProductoBalanza"))){
+                        || (model.is_ValueChanged("Description"))
+                        || (model.is_ValueChanged("IsActive")) || (model.is_ValueChanged("EsProductoBalanza"))){
 
                     // Marca Update
                     MZDibalInterfaceOut dibalInterfaceOut = MZDibalInterfaceOut.getRecord(model.getCtx(), I_M_Product.Table_ID, model.get_ID(), model.get_TrxName());
@@ -100,30 +101,38 @@ public class ValidatorDibal implements ModelValidator {
                         // Proceso segun marca que ya tenía este producto antes de su actualización.
                         // Si marca anterior es CREATE
                         if (dibalInterfaceOut.getCRUDType().equalsIgnoreCase(X_Z_DibalInterfaceOut.CRUDTYPE_CREATE)){
+
+                            // Si se desactiva el producto o no es mas de balanza, tengo que eliminar la marca de create
+                            if ((!model.isActive()) || (!model.get_ValueAsBoolean("EsProductoBalanza"))){
+                                dibalInterfaceOut.deleteEx(true);
+                            }
+
                             // No hago nada y respeto primer marca
                             return mensaje;
                         }
                         else if (dibalInterfaceOut.getCRUDType().equalsIgnoreCase(X_Z_DibalInterfaceOut.CRUDTYPE_DELETE)){
-                            // Si marca anterior es DELETEAR, es porque el producto se inactivo anteriormente.
-                            // Si este producto sigue estando inactivo
-                            if (!model.isActive()){
+                            // Si marca anterior es DELETE, es porque el producto se inactivo anteriormente o se marco como no de balanza
+                            // Si este producto sigue estando inactivo o sigue siendo de no balanza
+                            if ((!model.isActive()) || (!model.get_ValueAsBoolean("EsProductoBalanza"))){
                                 // No hago nada y respeto primer marca.
                                 return mensaje;
                             }
                         }
                     }
 
-                    // Si no tengo marca de update, la creo ahora.
-                    if ((dibalInterfaceOut == null) || (dibalInterfaceOut.get_ID() <= 0)){
-                        // No existe aun marca de UPDATE sobre este producto, la creo ahora.
-                        dibalInterfaceOut = new MZDibalInterfaceOut(model.getCtx(), 0, model.get_TrxName());
-                        dibalInterfaceOut.setCRUDType(X_Z_DibalInterfaceOut.CRUDTYPE_UPDATE);
-                        dibalInterfaceOut.setAD_Table_ID(I_M_Product.Table_ID);
-                        dibalInterfaceOut.setSeqNo(20);
-                        dibalInterfaceOut.setRecord_ID(model.get_ID());
-                        dibalInterfaceOut.saveEx();
+                    // Si el producto esta activo y es de balanza, creo marca de update
+                    if ((model.isActive()) && (model.get_ValueAsBoolean("EsProductoBalanza"))){
+                        // Si no tengo marca de update, la creo ahora.
+                        if ((dibalInterfaceOut == null) || (dibalInterfaceOut.get_ID() <= 0)){
+                            // No existe aun marca de UPDATE sobre este producto, la creo ahora.
+                            dibalInterfaceOut = new MZDibalInterfaceOut(model.getCtx(), 0, model.get_TrxName());
+                            dibalInterfaceOut.setCRUDType(X_Z_DibalInterfaceOut.CRUDTYPE_UPDATE);
+                            dibalInterfaceOut.setAD_Table_ID(I_M_Product.Table_ID);
+                            dibalInterfaceOut.setSeqNo(20);
+                            dibalInterfaceOut.setRecord_ID(model.get_ID());
+                            dibalInterfaceOut.saveEx();
+                        }
                     }
-
                 }
             }
         }
