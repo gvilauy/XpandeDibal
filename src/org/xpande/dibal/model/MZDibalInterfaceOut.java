@@ -71,6 +71,7 @@ public class MZDibalInterfaceOut extends X_Z_DibalInterfaceOut {
         String precioVenta = "", codPlu = "2", tagFormat = "21";
 
         String formatoPrecio = String.format("%%0%dd", 10);
+        String formatoCodProd = String.format("%%0%dd", 6);
 
         try{
 
@@ -181,7 +182,8 @@ public class MZDibalInterfaceOut extends X_Z_DibalInterfaceOut {
             if ((!NumberUtils.isNumber(product.getValue())) || (product.getValue().length() > 4)){
                 throw new AdempiereException("Código interno del Producto debe ser númerico y no mayor a 9999 (4 dígitos) ");
             }
-            codigoProducto = product.getValue();
+            codigoProducto = product.getValue().trim();
+            codigoProducto = String.format(formatoCodProd, Integer.parseInt(codigoProducto));
 
             // Nombre corto del producto.
             nombreProducto = String.format("%1$-30s", product.getDescription().trim());
@@ -198,8 +200,7 @@ public class MZDibalInterfaceOut extends X_Z_DibalInterfaceOut {
             }
 
             BigDecimal priceSO = productPrice.getPriceList();
-
-            priceSO = priceSO.setScale(priceList.getPricePrecision(), RoundingMode.HALF_UP);
+            priceSO = priceSO.setScale(2, RoundingMode.HALF_UP);
 
             precioVenta = priceSO.toString();
             precioVenta = precioVenta.replace(".", "");
