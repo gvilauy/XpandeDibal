@@ -180,7 +180,7 @@ public class MZDibalInterfaceOut extends X_Z_DibalInterfaceOut {
 
             // Codigo de producto. Solo numeros hasta el : 999999 (6 digitos)
             if ((!NumberUtils.isNumber(product.getValue())) || (product.getValue().length() > 4)){
-                throw new AdempiereException("Código interno del Producto debe ser númerico y no mayor a 9999 (4 dígitos) ");
+                throw new AdempiereException("Código interno del Producto debe ser númerico y no mayor a 9999 : " + product.getValue() + " - " + product.getName());
             }
             codigoProducto = product.getValue().trim();
             codigoProducto = String.format(formatoCodProd, Integer.parseInt(codigoProducto));
