@@ -92,7 +92,7 @@ public class ValidatorDibal implements ModelValidator {
 
                 // Pregunto por los campos cuyo cambio requiere informar a Balanza
                 if ((model.is_ValueChanged("C_UOM_ID"))
-                        || (model.is_ValueChanged("Description"))
+                        || (model.is_ValueChanged("Description"))  || (model.is_ValueChanged("IsSold"))
                         || (model.is_ValueChanged("IsActive")) || (model.is_ValueChanged("EsProductoBalanza"))){
 
                     // Marca Update
@@ -103,7 +103,7 @@ public class ValidatorDibal implements ModelValidator {
                         if (dibalInterfaceOut.getCRUDType().equalsIgnoreCase(X_Z_DibalInterfaceOut.CRUDTYPE_CREATE)){
 
                             // Si se desactiva el producto o no es mas de balanza, tengo que eliminar la marca de create
-                            if ((!model.isActive()) || (!model.get_ValueAsBoolean("EsProductoBalanza"))){
+                            if ((!model.isActive()) || (!model.isSold()) || (!model.get_ValueAsBoolean("EsProductoBalanza"))){
                                 dibalInterfaceOut.deleteEx(true);
                             }
 
@@ -113,7 +113,7 @@ public class ValidatorDibal implements ModelValidator {
                         else if (dibalInterfaceOut.getCRUDType().equalsIgnoreCase(X_Z_DibalInterfaceOut.CRUDTYPE_DELETE)){
                             // Si marca anterior es DELETE, es porque el producto se inactivo anteriormente o se marco como no de balanza
                             // Si este producto sigue estando inactivo o sigue siendo de no balanza
-                            if ((!model.isActive()) || (!model.get_ValueAsBoolean("EsProductoBalanza"))){
+                            if ((!model.isActive()) || (!model.isSold()) || (!model.get_ValueAsBoolean("EsProductoBalanza"))){
                                 // No hago nada y respeto primer marca.
                                 return mensaje;
                             }
@@ -121,7 +121,7 @@ public class ValidatorDibal implements ModelValidator {
                     }
 
                     // Si el producto esta activo y es de balanza, creo marca de update
-                    if ((model.isActive()) && (model.get_ValueAsBoolean("EsProductoBalanza"))){
+                    if ((model.isActive()) && (model.isSold()) && (model.get_ValueAsBoolean("EsProductoBalanza"))){
                         // Si no tengo marca de update, la creo ahora.
                         if ((dibalInterfaceOut == null) || (dibalInterfaceOut.get_ID() <= 0)){
                             // No existe aun marca de UPDATE sobre este producto, la creo ahora.
