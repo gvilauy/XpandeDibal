@@ -149,7 +149,7 @@ public class MZDibalInterfaceOut extends X_Z_DibalInterfaceOut {
             if (product.get_Value("CodigoBalanza") != null){
                 String codBalanza = ((String) product.get_Value("CodigoBalanza")).trim();
                 if (codBalanza.length() > 3){
-                    throw new AdempiereException("Código de Balanza parametrizado en el producto, debe tener como máximo 3 caracteres.");
+                    throw new AdempiereException("Código de Balanza parametrizado en el producto: " + product.getValue() + ", debe tener como máximo 3 caracteres.");
                 }
                 if (codBalanza.length() == 1){
                     codBalanza = "00" + codBalanza;
