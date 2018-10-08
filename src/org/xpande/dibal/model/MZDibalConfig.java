@@ -21,15 +21,18 @@ public class MZDibalConfig extends X_Z_DibalConfig {
     }
 
     /***
-     * Obtiene modelo único de configuración del proceso de Interface contra Dibal.
+     * Obtiene modelo único de configuración del proceso de Interface contra Dibal para una determinada organización.
      * Xpande. Created by Gabriel Vila on 8/22/17.
      * @param ctx
+     * @param
      * @param trxName
      * @return
      */
-    public static MZDibalConfig getDefault(Properties ctx, String trxName){
+    public static MZDibalConfig getDefaultByOrg(Properties ctx, int adOrgID, String trxName){
 
-        MZDibalConfig model = new Query(ctx, I_Z_DibalConfig.Table_Name, "", trxName).first();
+        String whereClause = X_Z_DibalConfig.COLUMNNAME_AD_Org_ID + " =" + adOrgID;
+
+        MZDibalConfig model = new Query(ctx, I_Z_DibalConfig.Table_Name, whereClause, trxName).first();
 
         return model;
     }

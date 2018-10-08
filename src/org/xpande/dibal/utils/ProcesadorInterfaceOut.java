@@ -62,7 +62,7 @@ public class ProcesadorInterfaceOut {
             }
 
             // Obtengo configurador de dibal
-            this.dibalConfig = MZDibalConfig.getDefault(ctx, trxName);
+            this.dibalConfig = MZDibalConfig.getDefaultByOrg(ctx, adOrgID, trxName);
 
             // Creación de archivos de interface
             this.createFiles();
