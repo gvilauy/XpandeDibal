@@ -196,7 +196,7 @@ public class MZDibalInterfaceOut extends X_Z_DibalInterfaceOut {
             MProductPrice productPrice = MProductPrice.get(getCtx(), priceListVersion.get_ID(), product.get_ID(), get_TrxName());
 
             if (productPrice == null){
-                throw new AdempiereException("No se obtuvo precio de venta para el producto con ID : " + product.get_ID());
+                throw new AdempiereException("No se obtuvo precio de venta para el producto con código interno : " + product.getValue());
             }
 
             BigDecimal priceSO = productPrice.getPriceList();
