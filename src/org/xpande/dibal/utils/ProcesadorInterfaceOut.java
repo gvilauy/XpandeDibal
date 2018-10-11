@@ -77,7 +77,7 @@ public class ProcesadorInterfaceOut {
             this.createFiles();
 
             // Proceso lineas de interface de salida correspondiente a productos
-            message = this.executeInterfaceOutProducts(adOrgID);
+            message = this.executeInterfaceOutProducts();
             if (message != null) return message;
 
             // Copiar archivos creados en path destino de dibal
@@ -104,10 +104,9 @@ public class ProcesadorInterfaceOut {
      * Genera lineas en el archivo de interface, según marcas actuales de cambios en productos.
      * Considera precio de la organización recibida.
      * Xpande. Created by Gabriel Vila on 8/22/17.
-     * @param adOrgID
      * @return
      */
-    private String executeInterfaceOutProducts(int adOrgID) {
+    private String executeInterfaceOutProducts() {
 
         String message = null;
         BufferedWriter bufferedWriterBatch = null;
@@ -168,7 +167,8 @@ public class ProcesadorInterfaceOut {
     private List<MZDibalInterfaceOut> getLinesProdsNotExecuted() {
 
         String whereClause = X_Z_DibalInterfaceOut.COLUMNNAME_IsExecuted + " ='N' " +
-                " AND " + X_Z_DibalInterfaceOut.COLUMNNAME_AD_Table_ID + " =" + I_M_Product.Table_ID;
+                " AND " + X_Z_DibalInterfaceOut.COLUMNNAME_AD_Table_ID + " =" + I_M_Product.Table_ID +
+                " AND " + X_Z_DibalInterfaceOut.COLUMNNAME_AD_OrgTrx_ID + " =" + this.dibalConfigOrg.getAD_OrgTrx_ID();
 
         List<MZDibalInterfaceOut> lines = new Query(ctx, I_Z_DibalInterfaceOut.Table_Name, whereClause, trxName).setOrderBy(" SeqNo, Created  ").list();
 

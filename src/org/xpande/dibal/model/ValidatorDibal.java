@@ -5,6 +5,8 @@ import org.compiere.util.DB;
 import org.xpande.core.model.I_Z_ProductoUPC;
 import org.xpande.core.model.MZProductoUPC;
 
+import java.util.List;
+
 /**
  * Model Validator para interface con Sistema de Balanzas DIBAL.
  * Product: Adempiere ERP & CRM Smart Business Solution. Localization : Uruguay - Xpande
@@ -72,68 +74,78 @@ public class ValidatorDibal implements ModelValidator {
         // Dibal. Interface salida Balanzas
         if ((type == ModelValidator.TYPE_AFTER_NEW) || (type == ModelValidator.TYPE_AFTER_CHANGE)){
 
-            if (type == ModelValidator.TYPE_AFTER_NEW){
+            // Obtengo configurador general y único de dibal
+            MZDibalConfig dibalConfig = MZDibalConfig.getDefault(model.getCtx(), model.get_TrxName());
+            List<MZDibalConfigOrg> configOrgList = dibalConfig.getOrganization();
+            for (MZDibalConfigOrg configOrg: configOrgList){
 
-                // Si el producto no se vende, o no esta activo, o no es balanza al momento de crearse, no hago nada
-                if ((!model.isSold()) || (!model.isActive()) || (!model.get_ValueAsBoolean("EsProductoBalanza"))){
-                    return mensaje;
+                if (type == ModelValidator.TYPE_AFTER_NEW){
+
+                    // Si el producto no se vende, o no esta activo, o no es balanza al momento de crearse, no hago nada
+                    if ((!model.isSold()) || (!model.isActive()) || (!model.get_ValueAsBoolean("EsProductoBalanza"))){
+                        return mensaje;
+                    }
+
+                    // Marca de Creacion de Producto
+                    MZDibalInterfaceOut dibalInterfaceOut = new MZDibalInterfaceOut(model.getCtx(), 0, model.get_TrxName());
+                    dibalInterfaceOut.setCRUDType(X_Z_DibalInterfaceOut.CRUDTYPE_CREATE);
+                    dibalInterfaceOut.setSeqNo(10);
+                    dibalInterfaceOut.setAD_Table_ID(I_M_Product.Table_ID);
+                    dibalInterfaceOut.setRecord_ID(model.get_ID());
+                    dibalInterfaceOut.setAD_OrgTrx_ID(configOrg.getAD_OrgTrx_ID());
+                    dibalInterfaceOut.saveEx();
+
                 }
+                else if (type == ModelValidator.TYPE_AFTER_CHANGE){
 
-                // Marca de Creacion de Producto
-                MZDibalInterfaceOut dibalInterfaceOut = new MZDibalInterfaceOut(model.getCtx(), 0, model.get_TrxName());
-                dibalInterfaceOut.setCRUDType(X_Z_DibalInterfaceOut.CRUDTYPE_CREATE);
-                dibalInterfaceOut.setSeqNo(10);
-                dibalInterfaceOut.setAD_Table_ID(I_M_Product.Table_ID);
-                dibalInterfaceOut.setRecord_ID(model.get_ID());
-                dibalInterfaceOut.saveEx();
+                    // Pregunto por los campos cuyo cambio requiere informar a Balanza
+                    if ((model.is_ValueChanged("C_UOM_ID"))
+                            || (model.is_ValueChanged("Description"))  || (model.is_ValueChanged("IsSold"))
+                            || (model.is_ValueChanged("IsActive")) || (model.is_ValueChanged("EsProductoBalanza"))){
 
-            }
-            else if (type == ModelValidator.TYPE_AFTER_CHANGE){
+                        // Marca Update
+                        MZDibalInterfaceOut dibalInterfaceOut = MZDibalInterfaceOut.getRecord(model.getCtx(), I_M_Product.Table_ID, model.get_ID(),
+                                                                        configOrg.getAD_OrgTrx_ID(), model.get_TrxName());
+                        if ((dibalInterfaceOut != null) && (dibalInterfaceOut.get_ID() > 0)){
+                            // Proceso segun marca que ya tenía este producto antes de su actualización.
+                            // Si marca anterior es CREATE
+                            if (dibalInterfaceOut.getCRUDType().equalsIgnoreCase(X_Z_DibalInterfaceOut.CRUDTYPE_CREATE)){
 
-                // Pregunto por los campos cuyo cambio requiere informar a Balanza
-                if ((model.is_ValueChanged("C_UOM_ID"))
-                        || (model.is_ValueChanged("Description"))  || (model.is_ValueChanged("IsSold"))
-                        || (model.is_ValueChanged("IsActive")) || (model.is_ValueChanged("EsProductoBalanza"))){
+                                // Si se desactiva el producto o no es mas de balanza, tengo que eliminar la marca de create
+                                if ((!model.isActive()) || (!model.isSold()) || (!model.get_ValueAsBoolean("EsProductoBalanza"))){
+                                    dibalInterfaceOut.deleteEx(true);
+                                }
 
-                    // Marca Update
-                    MZDibalInterfaceOut dibalInterfaceOut = MZDibalInterfaceOut.getRecord(model.getCtx(), I_M_Product.Table_ID, model.get_ID(), model.get_TrxName());
-                    if ((dibalInterfaceOut != null) && (dibalInterfaceOut.get_ID() > 0)){
-                        // Proceso segun marca que ya tenía este producto antes de su actualización.
-                        // Si marca anterior es CREATE
-                        if (dibalInterfaceOut.getCRUDType().equalsIgnoreCase(X_Z_DibalInterfaceOut.CRUDTYPE_CREATE)){
-
-                            // Si se desactiva el producto o no es mas de balanza, tengo que eliminar la marca de create
-                            if ((!model.isActive()) || (!model.isSold()) || (!model.get_ValueAsBoolean("EsProductoBalanza"))){
-                                dibalInterfaceOut.deleteEx(true);
-                            }
-
-                            // No hago nada y respeto primer marca
-                            return mensaje;
-                        }
-                        else if (dibalInterfaceOut.getCRUDType().equalsIgnoreCase(X_Z_DibalInterfaceOut.CRUDTYPE_DELETE)){
-                            // Si marca anterior es DELETE, es porque el producto se inactivo anteriormente o se marco como no de balanza
-                            // Si este producto sigue estando inactivo o sigue siendo de no balanza
-                            if ((!model.isActive()) || (!model.isSold()) || (!model.get_ValueAsBoolean("EsProductoBalanza"))){
-                                // No hago nada y respeto primer marca.
+                                // No hago nada y respeto primer marca
                                 return mensaje;
                             }
+                            else if (dibalInterfaceOut.getCRUDType().equalsIgnoreCase(X_Z_DibalInterfaceOut.CRUDTYPE_DELETE)){
+                                // Si marca anterior es DELETE, es porque el producto se inactivo anteriormente o se marco como no de balanza
+                                // Si este producto sigue estando inactivo o sigue siendo de no balanza
+                                if ((!model.isActive()) || (!model.isSold()) || (!model.get_ValueAsBoolean("EsProductoBalanza"))){
+                                    // No hago nada y respeto primer marca.
+                                    return mensaje;
+                                }
+                            }
                         }
-                    }
 
-                    // Si el producto esta activo y es de balanza, creo marca de update
-                    if ((model.isActive()) && (model.isSold()) && (model.get_ValueAsBoolean("EsProductoBalanza"))){
-                        // Si no tengo marca de update, la creo ahora.
-                        if ((dibalInterfaceOut == null) || (dibalInterfaceOut.get_ID() <= 0)){
-                            // No existe aun marca de UPDATE sobre este producto, la creo ahora.
-                            dibalInterfaceOut = new MZDibalInterfaceOut(model.getCtx(), 0, model.get_TrxName());
-                            dibalInterfaceOut.setCRUDType(X_Z_DibalInterfaceOut.CRUDTYPE_UPDATE);
-                            dibalInterfaceOut.setAD_Table_ID(I_M_Product.Table_ID);
-                            dibalInterfaceOut.setSeqNo(20);
-                            dibalInterfaceOut.setRecord_ID(model.get_ID());
-                            dibalInterfaceOut.saveEx();
+                        // Si el producto esta activo y es de balanza, creo marca de update
+                        if ((model.isActive()) && (model.isSold()) && (model.get_ValueAsBoolean("EsProductoBalanza"))){
+                            // Si no tengo marca de update, la creo ahora.
+                            if ((dibalInterfaceOut == null) || (dibalInterfaceOut.get_ID() <= 0)){
+                                // No existe aun marca de UPDATE sobre este producto, la creo ahora.
+                                dibalInterfaceOut = new MZDibalInterfaceOut(model.getCtx(), 0, model.get_TrxName());
+                                dibalInterfaceOut.setCRUDType(X_Z_DibalInterfaceOut.CRUDTYPE_UPDATE);
+                                dibalInterfaceOut.setAD_Table_ID(I_M_Product.Table_ID);
+                                dibalInterfaceOut.setSeqNo(20);
+                                dibalInterfaceOut.setRecord_ID(model.get_ID());
+                                dibalInterfaceOut.setAD_OrgTrx_ID(configOrg.getAD_OrgTrx_ID());
+                                dibalInterfaceOut.saveEx();
+                            }
                         }
                     }
                 }
+
             }
         }
 
@@ -170,7 +182,8 @@ public class ValidatorDibal implements ModelValidator {
             }
 
             // Si existe, obtengo marca de interface de este producto
-            MZDibalInterfaceOut dibalInterfaceOut = MZDibalInterfaceOut.getRecord(model.getCtx(), I_M_Product.Table_ID, product.get_ID(), model.get_TrxName());
+            MZDibalInterfaceOut dibalInterfaceOut = MZDibalInterfaceOut.getRecord(model.getCtx(), I_M_Product.Table_ID, product.get_ID(),
+                                                        priceList.getAD_Org_ID(), model.get_TrxName());
             if ((dibalInterfaceOut != null) && (dibalInterfaceOut.get_ID() > 0)){
                 // Proceso segun marca que ya tenía este producto antes de su actualización.
                 // Si marca anterior es CREATE

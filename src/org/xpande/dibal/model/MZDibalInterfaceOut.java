@@ -37,13 +37,15 @@ public class MZDibalInterfaceOut extends X_Z_DibalInterfaceOut {
      * @param ctx
      * @param adTableID
      * @param recordID
+     * @param adOrgID
      * @param trxName
      * @return
      */
-    public static MZDibalInterfaceOut getRecord(Properties ctx, int adTableID, int recordID, String trxName){
+    public static MZDibalInterfaceOut getRecord(Properties ctx, int adTableID, int recordID, int adOrgID, String trxName){
 
         String whereClause = X_Z_DibalInterfaceOut.COLUMNNAME_AD_Table_ID + " =" + adTableID +
                 " AND " + X_Z_DibalInterfaceOut.COLUMNNAME_Record_ID + " =" + recordID +
+                " AND " + X_Z_DibalInterfaceOut.COLUMNNAME_AD_OrgTrx_ID + " =" + adOrgID +
                 " AND " + X_Z_DibalInterfaceOut.COLUMNNAME_IsExecuted + " ='N'";
 
         MZDibalInterfaceOut model = new Query(ctx, I_Z_DibalInterfaceOut.Table_Name, whereClause, trxName).first();

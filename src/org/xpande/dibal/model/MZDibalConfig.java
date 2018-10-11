@@ -3,6 +3,7 @@ package org.xpande.dibal.model;
 import org.compiere.model.Query;
 
 import java.sql.ResultSet;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -49,4 +50,20 @@ public class MZDibalConfig extends X_Z_DibalConfig {
 
         return model;
     }
+
+
+    /***
+     * Obtiene y retorna organizaciones asociadas a esta configuracion de dibal.
+     * Xpande. Created by Gabriel Vila on 10/11/18.
+     * @return
+     */
+    public List<MZDibalConfigOrg> getOrganization(){
+
+        String whereClause = X_Z_DibalConfigOrg.COLUMNNAME_Z_DibalConfig_ID + " =" + this.get_ID();
+
+        List<MZDibalConfigOrg> lines = new Query(getCtx(), I_Z_DibalConfigOrg.Table_Name, whereClause, get_TrxName()).list();
+
+        return lines;
+    }
+
 }
