@@ -30,7 +30,7 @@ public class X_Z_DibalConfigOrg extends PO implements I_Z_DibalConfigOrg, I_Pers
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20170822L;
+	private static final long serialVersionUID = 20181011L;
 
     /** Standard Constructor */
     public X_Z_DibalConfigOrg (Properties ctx, int Z_DibalConfigOrg_ID, String trxName)
@@ -94,6 +94,23 @@ public class X_Z_DibalConfigOrg extends PO implements I_Z_DibalConfigOrg, I_Pers
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set ArchivoBatch.
+		@param ArchivoBatch 
+		Nombre del archivo Batch de interface de salida de Sisteco
+	  */
+	public void setArchivoBatch (String ArchivoBatch)
+	{
+		set_Value (COLUMNNAME_ArchivoBatch, ArchivoBatch);
+	}
+
+	/** Get ArchivoBatch.
+		@return Nombre del archivo Batch de interface de salida de Sisteco
+	  */
+	public String getArchivoBatch () 
+	{
+		return (String)get_Value(COLUMNNAME_ArchivoBatch);
 	}
 
 	/** Set Dibal_CodRapido.
@@ -179,6 +196,57 @@ public class X_Z_DibalConfigOrg extends PO implements I_Z_DibalConfigOrg, I_Pers
 	public String getDibal_Tienda () 
 	{
 		return (String)get_Value(COLUMNNAME_Dibal_Tienda);
+	}
+
+	/** Set RutaInterfaceOut.
+		@param RutaInterfaceOut 
+		Ruta donde se crean los archivos de interface de salida para Sisteco
+	  */
+	public void setRutaInterfaceOut (String RutaInterfaceOut)
+	{
+		set_Value (COLUMNNAME_RutaInterfaceOut, RutaInterfaceOut);
+	}
+
+	/** Get RutaInterfaceOut.
+		@return Ruta donde se crean los archivos de interface de salida para Sisteco
+	  */
+	public String getRutaInterfaceOut () 
+	{
+		return (String)get_Value(COLUMNNAME_RutaInterfaceOut);
+	}
+
+	/** Set RutaInterfaceOutHist.
+		@param RutaInterfaceOutHist 
+		Ruta donde dejar archivos de historico de interface de salida a Sisteco
+	  */
+	public void setRutaInterfaceOutHist (String RutaInterfaceOutHist)
+	{
+		set_Value (COLUMNNAME_RutaInterfaceOutHist, RutaInterfaceOutHist);
+	}
+
+	/** Get RutaInterfaceOutHist.
+		@return Ruta donde dejar archivos de historico de interface de salida a Sisteco
+	  */
+	public String getRutaInterfaceOutHist () 
+	{
+		return (String)get_Value(COLUMNNAME_RutaInterfaceOutHist);
+	}
+
+	/** Set SeparadorArchivoOut.
+		@param SeparadorArchivoOut 
+		Separador de campos del archivo de interface de salida de Sisteco
+	  */
+	public void setSeparadorArchivoOut (String SeparadorArchivoOut)
+	{
+		set_Value (COLUMNNAME_SeparadorArchivoOut, SeparadorArchivoOut);
+	}
+
+	/** Get SeparadorArchivoOut.
+		@return Separador de campos del archivo de interface de salida de Sisteco
+	  */
+	public String getSeparadorArchivoOut () 
+	{
+		return (String)get_Value(COLUMNNAME_SeparadorArchivoOut);
 	}
 
 	public I_Z_DibalConfig getZ_DibalConfig() throws RuntimeException

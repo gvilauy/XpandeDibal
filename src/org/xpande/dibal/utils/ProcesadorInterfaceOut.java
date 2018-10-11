@@ -24,8 +24,8 @@ public class ProcesadorInterfaceOut {
     private Properties ctx = null;
     private String trxName = null;
 
-    // Configurador de Dibal
-    private MZDibalConfig dibalConfig = null;
+    // Configurador de Dibal para organización a procesar.
+    private MZDibalConfigOrg dibalConfigOrg = null;
 
     // Archivo
     private File fileBatch = null;
@@ -61,8 +61,17 @@ public class ProcesadorInterfaceOut {
                 return "Debe indicar una Organización para este proceso";
             }
 
-            // Obtengo configurador de dibal
-            this.dibalConfig = MZDibalConfig.getDefaultByOrg(ctx, adOrgID, trxName);
+            // Obtengo configurador general y único de dibal
+            MZDibalConfig dibalConfig = MZDibalConfig.getDefault(ctx, trxName);
+            if ((dibalConfig == null) || (dibalConfig.get_ID() <= 0)){
+                return "Falta configurar Dibal para este proceso.";
+            }
+
+            // Configuracion para organización del proceso
+            this.dibalConfigOrg = dibalConfig.getOrgConfig(adOrgID);
+            if ((this.dibalConfigOrg == null) || (this.dibalConfigOrg.get_ID() <= 0)){
+                return "Falta configurar esta organización para este proceso en Dibal.";
+            }
 
             // Creación de archivos de interface
             this.createFiles();
@@ -72,12 +81,12 @@ public class ProcesadorInterfaceOut {
             if (message != null) return message;
 
             // Copiar archivos creados en path destino de dibal
-            String pathArchivosDestino = this.dibalConfig.getRutaInterfaceOut() + File.separator;
+            String pathArchivosDestino = this.dibalConfigOrg.getRutaInterfaceOut() + File.separator;
 
             // Si tengo lineas en archivos batch
             if (this.contadorLinBatch > 0){
                 // Copio archivo batch a path destino
-                File fileBatchDest = new File( pathArchivosDestino + this.dibalConfig.getArchivoBatch());
+                File fileBatchDest = new File( pathArchivosDestino + this.dibalConfigOrg.getArchivoBatch());
                 FileUtils.copyFile(this.fileBatch, fileBatchDest);
             }
 
@@ -105,9 +114,6 @@ public class ProcesadorInterfaceOut {
 
         try{
 
-            // Configuracion para organización del proceso
-            MZDibalConfigOrg configOrg = this.dibalConfig.getOrgConfig(adOrgID);
-
             FileWriter fileWriterBatch = new FileWriter(this.fileBatch, true);
             bufferedWriterBatch = new BufferedWriter(fileWriterBatch);
 
@@ -115,7 +121,7 @@ public class ProcesadorInterfaceOut {
             List<MZDibalInterfaceOut> interfaceOuts = this.getLinesProdsNotExecuted();
             for (MZDibalInterfaceOut interfaceOut: interfaceOuts){
 
-                List<String> lineasArchivo = interfaceOut.getLineasArchivoProducto(configOrg);
+                List<String> lineasArchivo = interfaceOut.getLineasArchivoProducto(this.dibalConfigOrg);
                 for (String lineaArchivo: lineasArchivo){
 
                     bufferedWriterBatch.append(lineaArchivo);
@@ -182,9 +188,9 @@ public class ProcesadorInterfaceOut {
 
             this.fechaHoy = fecha;
 
-            String pathArchivos = dibalConfig.getRutaInterfaceOutHist() + File.separator + this.fechaHoy;
+            String pathArchivos = this.dibalConfigOrg.getRutaInterfaceOutHist() + File.separator + this.fechaHoy;
 
-            fileBatch = new File(pathArchivos + dibalConfig.getArchivoBatch());
+            fileBatch = new File(pathArchivos + this.dibalConfigOrg.getArchivoBatch());
 
         }
         catch (Exception e){

@@ -76,6 +76,19 @@ public interface I_Z_DibalConfigOrg
 	  */
 	public int getAD_OrgTrx_ID();
 
+    /** Column name ArchivoBatch */
+    public static final String COLUMNNAME_ArchivoBatch = "ArchivoBatch";
+
+	/** Set ArchivoBatch.
+	  * Nombre del archivo Batch de interface de salida de Sisteco
+	  */
+	public void setArchivoBatch(String ArchivoBatch);
+
+	/** Get ArchivoBatch.
+	  * Nombre del archivo Batch de interface de salida de Sisteco
+	  */
+	public String getArchivoBatch();
+
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
 
@@ -169,6 +182,45 @@ public interface I_Z_DibalConfigOrg
 	  * The record is active in the system
 	  */
 	public boolean isActive();
+
+    /** Column name RutaInterfaceOut */
+    public static final String COLUMNNAME_RutaInterfaceOut = "RutaInterfaceOut";
+
+	/** Set RutaInterfaceOut.
+	  * Ruta donde se crean los archivos de interface de salida para Sisteco
+	  */
+	public void setRutaInterfaceOut(String RutaInterfaceOut);
+
+	/** Get RutaInterfaceOut.
+	  * Ruta donde se crean los archivos de interface de salida para Sisteco
+	  */
+	public String getRutaInterfaceOut();
+
+    /** Column name RutaInterfaceOutHist */
+    public static final String COLUMNNAME_RutaInterfaceOutHist = "RutaInterfaceOutHist";
+
+	/** Set RutaInterfaceOutHist.
+	  * Ruta donde dejar archivos de historico de interface de salida a Sisteco
+	  */
+	public void setRutaInterfaceOutHist(String RutaInterfaceOutHist);
+
+	/** Get RutaInterfaceOutHist.
+	  * Ruta donde dejar archivos de historico de interface de salida a Sisteco
+	  */
+	public String getRutaInterfaceOutHist();
+
+    /** Column name SeparadorArchivoOut */
+    public static final String COLUMNNAME_SeparadorArchivoOut = "SeparadorArchivoOut";
+
+	/** Set SeparadorArchivoOut.
+	  * Separador de campos del archivo de interface de salida de Sisteco
+	  */
+	public void setSeparadorArchivoOut(String SeparadorArchivoOut);
+
+	/** Get SeparadorArchivoOut.
+	  * Separador de campos del archivo de interface de salida de Sisteco
+	  */
+	public String getSeparadorArchivoOut();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
