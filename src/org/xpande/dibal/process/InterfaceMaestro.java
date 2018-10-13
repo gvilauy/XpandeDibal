@@ -7,11 +7,11 @@ import org.xpande.dibal.utils.ProcesadorInterfaceOut;
 import java.math.BigDecimal;
 
 /**
- * Proceso para generación de archivo de interface de salida de datos desde el sistema hacia Balanzas Dibal.
+ * Proceso para ejecutar interface maestro de Dibal.
  * Product: Adempiere ERP & CRM Smart Business Solution. Localization : Uruguay - Xpande
- * Xpande. Created by Gabriel Vila on 8/22/17.
+ * Xpande. Created by Gabriel Vila on 10/12/18.
  */
-public class InterfaceOUT extends SvrProcess {
+public class InterfaceMaestro extends SvrProcess {
 
     private ProcesadorInterfaceOut procesadorInterfaceOut = null;
     private int adOrgID = 0;
@@ -41,7 +41,7 @@ public class InterfaceOUT extends SvrProcess {
     @Override
     protected String doIt() throws Exception {
 
-        String message = this.procesadorInterfaceOut.executeInterfaceOut(this.adOrgID, false);
+        String message = this.procesadorInterfaceOut.executeInterfaceOut(this.adOrgID, true);
 
         if (message != null){
             return "@Error@ " + message;
@@ -49,6 +49,5 @@ public class InterfaceOUT extends SvrProcess {
 
         return "OK";
     }
-
 
 }

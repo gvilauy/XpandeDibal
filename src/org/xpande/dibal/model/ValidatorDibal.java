@@ -208,6 +208,7 @@ public class ValidatorDibal implements ModelValidator {
                 dibalInterfaceOut.setCRUDType(X_Z_DibalInterfaceOut.CRUDTYPE_UPDATE);
                 dibalInterfaceOut.setAD_Table_ID(I_M_Product.Table_ID);
                 dibalInterfaceOut.setRecord_ID(product.get_ID());
+                dibalInterfaceOut.setAD_OrgTrx_ID(priceList.getAD_Org_ID());
                 dibalInterfaceOut.setSeqNo(30);
             }
             dibalInterfaceOut.saveEx();
