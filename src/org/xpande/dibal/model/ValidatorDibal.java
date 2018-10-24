@@ -143,6 +143,20 @@ public class ValidatorDibal implements ModelValidator {
                                 dibalInterfaceOut.saveEx();
                             }
                         }
+                        else{
+                            // Si tenia marca anterior la elimino y creo una de delete
+                            if ((dibalInterfaceOut != null) && (dibalInterfaceOut.get_ID() > 0)){
+                                dibalInterfaceOut.deleteEx(true);
+                                dibalInterfaceOut = null;
+                            }
+                            dibalInterfaceOut = new MZDibalInterfaceOut(model.getCtx(), 0, model.get_TrxName());
+                            dibalInterfaceOut.setCRUDType(X_Z_DibalInterfaceOut.CRUDTYPE_DELETE);
+                            dibalInterfaceOut.setAD_Table_ID(I_M_Product.Table_ID);
+                            dibalInterfaceOut.setSeqNo(30);
+                            dibalInterfaceOut.setRecord_ID(model.get_ID());
+                            dibalInterfaceOut.setAD_OrgTrx_ID(configOrg.getAD_OrgTrx_ID());
+                            dibalInterfaceOut.saveEx();
+                        }
                     }
                 }
 
