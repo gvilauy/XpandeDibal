@@ -84,6 +84,17 @@ public class MZDibalInterfaceOut extends X_Z_DibalInterfaceOut {
             int adOrgID = configOrg.getAD_OrgTrx_ID();
 
             MProduct product = new MProduct(getCtx(), this.getRecord_ID(), get_TrxName());
+
+            // Me aseguro que si el producto no cumple con las condiciones para estar en Balanza y NO tiene marca de DELETE, borre la marca y no hago nada.
+            // Verifico si la marca no es delete y el producto esta marcado como producto de balanza, o no esta activo o no se vende.
+            // Si esto sucede, le pongo la marca de delete para no generar inconsistencias.
+            if (!this.getCRUDType().equalsIgnoreCase(X_Z_DibalInterfaceOut.CRUDTYPE_DELETE)){
+                if (!product.isActive() || !product.isSold() || !product.get_ValueAsBoolean("EsProductoBalanza")){
+                    this.deleteEx(true);
+                    return lineas;
+                }
+            }
+
             MPriceList priceList = null;
             if (this.getM_PriceList_ID() > 0){
                 priceList = (MPriceList)this.getM_PriceList();
