@@ -98,6 +98,15 @@ public class ValidatorDibal implements ModelValidator {
                 }
                 else if (type == ModelValidator.TYPE_AFTER_CHANGE){
 
+                    // Si no se cambio flag de Es Producto de Balanza y el producto no es de balanza
+                    if (!model.is_ValueChanged("EsProductoBalanza")){
+                        if (!model.get_ValueAsBoolean("EsProductoBalanza")){
+                            // No hago nada para Dibal.
+                            return mensaje;
+                        }
+                    }
+
+
                     // Pregunto por los campos cuyo cambio requiere informar a Balanza
                     if ((model.is_ValueChanged("C_UOM_ID"))
                             || (model.is_ValueChanged("Description"))  || (model.is_ValueChanged("IsSold"))
