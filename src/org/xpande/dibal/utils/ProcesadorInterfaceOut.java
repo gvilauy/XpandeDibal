@@ -310,10 +310,10 @@ public class ProcesadorInterfaceOut {
         try{
 
             MPriceList priceList = PriceListUtils.getPriceListByOrg(this.ctx, this.dibalConfigOrg.getAD_Client_ID(), this.dibalConfigOrg.getAD_OrgTrx_ID(),
-                                                            142, true, null);
+                                                            142, true, null, null);
             if ((priceList == null) || (priceList.get_ID() <= 0)){
                 priceList = PriceListUtils.getPriceListByOrg(this.ctx, this.dibalConfigOrg.getAD_Client_ID(), this.dibalConfigOrg.getAD_OrgTrx_ID(),
-                                                            100, true, null);
+                                                            100, true, null, null);
             }
 
             // Tienda. Desde configuración de organizacion para dibal
