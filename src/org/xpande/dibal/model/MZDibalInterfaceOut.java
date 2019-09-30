@@ -4,14 +4,17 @@ import org.adempiere.exceptions.AdempiereException;
 import org.apache.commons.lang.math.NumberUtils;
 import org.compiere.model.*;
 import org.compiere.util.Env;
+import org.compiere.util.TimeUtil;
 import org.xpande.core.utils.PriceListUtils;
 import org.xpande.retail.model.MZProductoFamilia;
+import org.xpande.retail.model.MZProductoOferta;
 import org.xpande.retail.model.MZProductoRubro;
 import org.xpande.retail.model.MZProductoSubfamilia;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -94,6 +97,15 @@ public class MZDibalInterfaceOut extends X_Z_DibalInterfaceOut {
                     return lineas;
                 }
             }
+
+            // Valido que el producto de esta linea no tengo una oferta definida dentro del mismo rango de fechas de esta oferta.
+            // Si tiene, simplemente no envío este producto ahora
+            Timestamp fechaHoy = TimeUtil.trunc(new Timestamp(System.currentTimeMillis()), TimeUtil.TRUNC_DAY);
+            MZProductoOferta productoOferta = MZProductoOferta.getByProductDate(getCtx(), product.get_ID(), fechaHoy, fechaHoy, get_TrxName());
+            if ((productoOferta != null) && (productoOferta.get_ID() > 0)){
+                return lineas;
+            }
+
 
             MPriceList priceList = null;
             if (this.getM_PriceList_ID() > 0){
