@@ -20,5 +20,7 @@
     <orderEntry type="module" module-name="XpandeScanntech" exported="" />
     <orderEntry type="module" module-name="XpandeBCU" exported="" />
     <orderEntry type="module" module-name="XpandeConty" exported="" />
+    <orderEntry type="module" module-name="XpandeFleet" exported="" />
+    <orderEntry type="module" module-name="XpandeTraffic" exported="" />
   </component>
 </module>
