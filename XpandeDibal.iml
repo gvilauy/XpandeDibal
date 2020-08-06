@@ -13,6 +13,7 @@
     <orderEntry type="module" module-name="XpandeSystem" exported="" />
     <orderEntry type="module" module-name="XpandeAccounting" exported="" />
     <orderEntry type="module" module-name="XpandeComercial" exported="" />
+    <orderEntry type="module" module-name="XpandeLogistica" exported="" />
     <orderEntry type="module" module-name="XpandeFinancial" exported="" />
     <orderEntry type="module" module-name="XpandeMobile" exported="" />
     <orderEntry type="module" module-name="XpandeRetail" exported="" />
