@@ -24,5 +24,6 @@
     <orderEntry type="module" module-name="XpandeConty" exported="" />
     <orderEntry type="module" module-name="XpandeFleet" exported="" />
     <orderEntry type="module" module-name="XpandeTraffic" exported="" />
+    <orderEntry type="module" module-name="XpandeTrale" exported="" />
   </component>
 </module>
