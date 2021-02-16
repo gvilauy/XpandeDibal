@@ -26,5 +26,8 @@
     <orderEntry type="module" module-name="XpandeFleet" exported="" />
     <orderEntry type="module" module-name="XpandeTraffic" exported="" />
     <orderEntry type="module" module-name="XpandeTrale" exported="" />
+    <orderEntry type="module" module-name="XpandeAduana" exported="" />
+    <orderEntry type="module" module-name="XpandeDIAN" exported="" />
+    <orderEntry type="module" module-name="XpandeGPC" exported="" />
   </component>
 </module>
