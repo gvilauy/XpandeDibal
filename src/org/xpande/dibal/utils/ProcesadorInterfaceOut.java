@@ -5,6 +5,8 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.compiere.model.*;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.compiere.util.TimeUtil;
+import org.xpande.comercial.model.MZProdSalesOffer;
 import org.xpande.core.utils.FileUtils;
 import org.xpande.core.utils.PriceListUtils;
 import org.xpande.dibal.model.*;
@@ -414,13 +416,30 @@ public class ProcesadorInterfaceOut {
                 nombreProducto = nombreProducto.substring(0, 30);
             }
 
+            // Si tengo oferta de venta vigente para este producto y organización me aseguro de setear este precio de oferta
+            // De esta manera la marca se crea pero el precio es el de oferta
+            BigDecimal salesOfferPrice = null;
+            Timestamp today = TimeUtil.trunc(new Timestamp(System.currentTimeMillis()), TimeUtil.TRUNC_DAY);
+            String sql = " select max(z_prodsalesoffer_id) as z_prodsalesoffer_id " +
+                    " from z_prodsalesoffer " +
+                    " where ad_org_id =" + this.dibalConfigOrg.getAD_OrgTrx_ID() +
+                    " and m_product_id =" + product.get_ID() +
+                    " and enddate >= '" + today + "' ";
+            int offerID = DB.getSQLValueEx(trxName, sql);
+            if (offerID > 0) {
+                MZProdSalesOffer prodSalesOffer = new MZProdSalesOffer(ctx, offerID, trxName);
+                salesOfferPrice = prodSalesOffer.getPrice();
+            }
+
             // Precio de venta. Admito en el maestro precio cero por ahora, para poder detectarlos.
             BigDecimal priceSO = Env.ZERO;
             MPriceListVersion priceListVersion = priceList.getPriceListVersion(null);
             MProductPrice productPrice = MProductPrice.get(this.ctx, priceListVersion.get_ID(), product.get_ID(), null);
-
             if (productPrice != null){
                 priceSO = productPrice.getPriceList();
+                if ((salesOfferPrice != null) && (salesOfferPrice.compareTo(Env.ZERO) > 0)){
+                    priceSO = salesOfferPrice;
+                }
             }
 
             priceSO = priceSO.setScale(2, RoundingMode.HALF_UP);
