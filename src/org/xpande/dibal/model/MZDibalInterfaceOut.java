@@ -3,8 +3,10 @@ package org.xpande.dibal.model;
 import org.adempiere.exceptions.AdempiereException;
 import org.apache.commons.lang.math.NumberUtils;
 import org.compiere.model.*;
+import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.TimeUtil;
+import org.xpande.comercial.model.MZProdSalesOffer;
 import org.xpande.core.utils.PriceListUtils;
 import org.xpande.retail.model.MZProductoFamilia;
 import org.xpande.retail.model.MZProductoOferta;
@@ -216,6 +218,21 @@ public class MZDibalInterfaceOut extends X_Z_DibalInterfaceOut {
                 nombreProducto = nombreProducto.substring(0, 30);
             }
 
+            // Si tengo oferta de venta vigente para este producto y organización me aseguro de setear este precio de oferta
+            // De esta manera la marca se crea pero el precio es el de oferta
+            BigDecimal salesOfferPrice = null;
+            Timestamp today = TimeUtil.trunc(new Timestamp(System.currentTimeMillis()), TimeUtil.TRUNC_DAY);
+            String sql = " select max(z_prodsalesoffer_id) as z_prodsalesoffer_id " +
+                    " from z_prodsalesoffer " +
+                    " where ad_org_id =" + configOrg.getAD_OrgTrx_ID() +
+                    " and m_product_id =" + product.get_ID() +
+                    " and enddate >= '" + today + "' ";
+            int offerID = DB.getSQLValueEx(get_TrxName(), sql);
+            if (offerID > 0) {
+                MZProdSalesOffer prodSalesOffer = new MZProdSalesOffer(getCtx(), offerID, get_TrxName());
+                salesOfferPrice = prodSalesOffer.getPrice();
+            }
+
             // Precio de venta
             MPriceListVersion priceListVersion = priceList.getPriceListVersion(null);
             MProductPrice productPrice = MProductPrice.get(getCtx(), priceListVersion.get_ID(), product.get_ID(), get_TrxName());
@@ -225,6 +242,9 @@ public class MZDibalInterfaceOut extends X_Z_DibalInterfaceOut {
             }
 
             BigDecimal priceSO = productPrice.getPriceList();
+            if ((salesOfferPrice != null) && (salesOfferPrice.compareTo(Env.ZERO) > 0)){
+                priceSO = salesOfferPrice;
+            }
             priceSO = priceSO.setScale(2, RoundingMode.HALF_UP);
 
             precioVenta = priceSO.toString();
