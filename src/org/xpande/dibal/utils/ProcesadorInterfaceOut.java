@@ -25,6 +25,7 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 /**
@@ -279,7 +280,15 @@ public class ProcesadorInterfaceOut {
 
             this.fechaHoy = fecha;
 
-            String pathArchivos = this.dibalConfigOrg.getRutaInterfaceOutHist() + File.separator + this.fechaHoy;
+            String separator = File.separator;
+            if (this.dibalConfigOrg.getRutaInterfaceOutHist() != null){
+                if (this.dibalConfigOrg.getRutaInterfaceOutHist().toLowerCase().contains("c:")){
+                    separator = "\\";
+                }
+            }
+
+            //String pathArchivos = this.dibalConfigOrg.getRutaInterfaceOutHist() + File.separator + this.fechaHoy;
+            String pathArchivos = this.dibalConfigOrg.getRutaInterfaceOutHist() + separator + this.fechaHoy;
 
             fileBatch = new File(pathArchivos + this.dibalConfigOrg.getArchivoBatch());
 
